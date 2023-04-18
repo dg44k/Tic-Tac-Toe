@@ -3,7 +3,9 @@ const gameBoard = (function () {
   window.onload = () => generationCellsField(fieldDOM);
   function generationCellsField(field) {
     for (let i = 0; i < 9; i++)
-      field.appendChild(document.createElement("div"));
+      field
+        .appendChild(document.createElement("div"))
+        .classList.add("cell-field");
   }
 
   let gameField = ["", "", "", "", "", "", "", "", ""];
@@ -18,6 +20,7 @@ const gameBoard = (function () {
     [2, 4, 6],
   ];
   return {
+    fieldDOM,
     gameField,
     winningConditions,
   };
@@ -40,17 +43,11 @@ const player = function (name, symbol) {
 const playerFirst = player("Kolya", "x");
 const playerOther = player("Danil", "o");
 
-const gameController = (function (playerFirst, playerOther, gameBoard) {
-  const setStep = (player, cell) => {
-    player.cells.push(gameBoard.gameField[cell]);
+const gameController = (function () {
+  const setStep = (e, player) => {
+    if (e.target == gameBoard.fieldDOM) return;
+    e.target.textContent = playerFirst.symbol;
   };
-  const battle = () => {
-    if (playerFirst.symbol === "x") setStep(playerFirst, 1);
-    else setStep(playerOther, 2);
-    //сделать ход
-    //Игра представляет собой цикл
-    //проверка на победу
-    //переход хода
-  };
-  battle();
-})(playerFirst, playerOther, gameBoard);
+  const checkOnWin = () => {};
+  gameBoard.fieldDOM.addEventListener("click", setStep);
+})();
