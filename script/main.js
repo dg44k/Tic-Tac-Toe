@@ -1,6 +1,6 @@
 const gameBoard = (function () {
   const fieldDOM = document.querySelector(".field");
-  window.onload = () => generationCellsField(fieldDOM);
+  generationCellsField(fieldDOM);
   function generationCellsField(field) {
     for (let i = 0; i < 9; i++)
       field
@@ -44,9 +44,14 @@ const playerFirst = player("Kolya", "x");
 const playerOther = player("Danil", "o");
 
 const gameController = (function () {
-  const setStep = (e, player) => {
+  if (playerFirst.symbol === "x") playerFirst.step = true;
+  else playerFirst.step = false;
+  const setStep = (e) => {
+    let currentPlayer = playerFirst.step ? playerFirst : playerOther;
     if (e.target == gameBoard.fieldDOM) return;
-    e.target.textContent = playerFirst.symbol;
+    e.target.textContent = currentPlayer.symbol;
+    if (playerFirst.step === true) playerFirst.step = false;
+    else playerFirst.step = true;
   };
   const checkOnWin = () => {};
   gameBoard.fieldDOM.addEventListener("click", setStep);
