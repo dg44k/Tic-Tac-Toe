@@ -1,14 +1,15 @@
 const gameBoard = (function () {
   const fieldDOM = document.querySelector(".field");
   generationCellsField(fieldDOM);
+
   function generationCellsField(field) {
-    for (let i = 0; i < 9; i++)
-      field
-        .appendChild(document.createElement("div"))
-        .classList.add("cell-field");
+    for (let i = 0; i < 9; i++) {
+      const div = document.createElement("div");
+      field.appendChild(div);
+      div.setAttribute("data-number", `${i}`);
+    }
   }
 
-  let gameField = ["", "", "", "", "", "", "", "", ""];
   let winningConditions = [
     [0, 1, 2],
     [3, 4, 5],
@@ -21,7 +22,6 @@ const gameBoard = (function () {
   ];
   return {
     fieldDOM,
-    gameField,
     winningConditions,
   };
 })();
@@ -50,9 +50,28 @@ const gameController = (function () {
     let currentPlayer = playerFirst.step ? playerFirst : playerOther;
     if (e.target == gameBoard.fieldDOM) return;
     e.target.textContent = currentPlayer.symbol;
+    currentPlayer.cells.push(+e.target.getAttribute("data-number"));
+    console.log(currentPlayer.cells);
+    if (currentPlayer.cells.length >= 3) {
+      console.log(checkOnWin(currentPlayer));
+    }
     if (playerFirst.step === true) playerFirst.step = false;
     else playerFirst.step = true;
   };
-  const checkOnWin = () => {};
+  const checkOnWin = (currentPlayer) => {
+    let counterHit = 0;
+    let i = 0;
+
+    while (i < gameBoard.winningConditions.length) {
+      for (let j = 0; j < 3; j++) {
+        if (currentPlayer.cells.indexOf(gameBoard.winningConditions[i][j]) === -1) break;
+        else counterHit++;
+      }
+      if (counterHit === 3) return true;
+      counterHit = 0;
+      i++;
+    }
+    return false;
+  };
   gameBoard.fieldDOM.addEventListener("click", setStep);
 })();
